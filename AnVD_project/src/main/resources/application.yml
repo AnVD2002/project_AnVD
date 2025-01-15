@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: AnVD_project3
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/project_1
+    username: root
+    password: 260415
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 865629047229-5eivbbdfkhfl2a3fcg160b0pav34gu3t.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "http://localhost:3000/auth/google/callback"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
