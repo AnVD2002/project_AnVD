@@ -1,4 +1,4 @@
-package com.example.AnVD_project.entity;
+package com.example.AnVD_project.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -17,7 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String Id;
+    private String id;
     @Column(name = "email")
     private String email;
     @Column(name = "name")
@@ -26,8 +26,10 @@ public class User {
     private String password;
     @Column(name = "number_phone")
     private String numberPhone;
+    @Column(name = "role_id")
+    private Long roleId;
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "decentralization_id")
-    private Decentralization decentralization;
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

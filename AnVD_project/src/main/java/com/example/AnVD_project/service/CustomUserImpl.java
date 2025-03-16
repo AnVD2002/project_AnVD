@@ -1,7 +1,7 @@
 package com.example.AnVD_project.service;
 
-import com.example.AnVD_project.entity.CustomUserDetail;
-import com.example.AnVD_project.entity.User;
+import com.example.AnVD_project.Entity.CustomUserDetail;
+import com.example.AnVD_project.Entity.User;
 import com.example.AnVD_project.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

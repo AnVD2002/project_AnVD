@@ -1,4 +1,4 @@
-package com.example.AnVD_project.entity;
+package com.example.AnVD_project.Entity;
 
 import com.example.AnVD_project.enums.RoleEnum;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -9,12 +9,12 @@ import java.util.List;
 
 @Getter
 @Setter
-@Table(name = "decentralization")
+@Table(name = "role")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class Decentralization {
+public class Role {
     @Id
     @Column(name = "id")
     @GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -23,6 +23,6 @@ public class Decentralization {
     @Enumerated(EnumType.STRING)
     private RoleEnum roleName;
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "decentralization" )
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "role" )
     private List<User> user;
 }

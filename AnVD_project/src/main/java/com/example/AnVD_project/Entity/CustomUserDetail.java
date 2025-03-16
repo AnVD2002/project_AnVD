@@ -1,4 +1,4 @@
-package com.example.AnVD_project.entity;
+package com.example.AnVD_project.Entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,7 +15,7 @@ public class CustomUserDetail implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getDecentralization().getRoleName().name()));
+        return List.of(new SimpleGrantedAuthority(user.getRole().getRoleName().name()));
     }
     @Override
     public String getPassword() {

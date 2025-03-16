@@ -8,7 +8,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class PageableResponse<T> {
     private List<T> content;
     private int page;

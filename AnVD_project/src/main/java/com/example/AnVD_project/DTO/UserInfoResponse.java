@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class UserInfoResponse {
-    private Long Id;
-    private String Name;
-    private String Email;
-    private String Phone;
-
+    private Long id;
+    private String name;
+    private String email;
+    private String numberPhone;
+    private Long roleId;
 }

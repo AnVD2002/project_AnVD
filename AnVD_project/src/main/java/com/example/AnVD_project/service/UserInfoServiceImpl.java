@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 @Service
 @RequiredArgsConstructor
-public class UserInfoImpl implements UserInfoService {
+public class UserInfoServiceImpl implements UserInfoService {
     private final WebClient webClient;
     public Map<String, Object> getUserInfo(String accessToken) {
         String googleUserInfoEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
