@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 @RestController
-@RequestMapping("/oauth2")
+@RequestMapping("/api/v1/oauth2")
 @RequiredArgsConstructor
 public class UserController {
 

@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -46,38 +47,38 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> registerAccount(RegisterRequestDTO request){
+    public ResponseEntity<?> registerAccount(RegisterRequestDTO request) {
         Map<String, Object> infoData = getUserInfo(request.getToken());
 
-        if (infoData==null||infoData.containsKey("error")) {
+        if (infoData == null || infoData.containsKey("error")) {
             return ResponseEntity.badRequest().body(infoData);
         }
 
-        if (!Objects.equals(request.getPassword(), request.getPasswordConfirm())){
-            return new ResponseEntity<>("password not mapping",HttpStatus.BAD_REQUEST);
+        if (!Objects.equals(request.getPassword(), request.getPasswordConfirm())) {
+            return new ResponseEntity<>("password not mapping", HttpStatus.BAD_REQUEST);
         }
 
         String email = infoData.get("email").toString();
 
         Optional<User> userOpt = userRepository.FindByEmail(email);
 
-        User user = userOpt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (user!=null) {
-            return new ResponseEntity<>("user already exist",HttpStatus.CONFLICT);
-        }
-        else {
-            Optional<Role> roleOpt = roleRepository.findRoleByRoleName(RoleEnum.USER);
+        userOpt.ifPresent(user -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User already exists");
+        });
 
-            Role role = roleOpt.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-            User newUser = new User();
-            newUser.setEmail(email);
-            newUser.setPassword(request.getPassword());
-            newUser.setName(request.getUsername());
-            newUser.setRole(role);
-            userRepository.save(newUser);
-        }
+        Optional<Role> roleOpt = roleRepository.findRoleByRoleName(RoleEnum.USER);
+
+        Role role = roleOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setPassword(request.getPassword());
+        newUser.setName(request.getUsername());
+        newUser.setRole(role);
+        userRepository.save(newUser);
+
         return ResponseEntity.ok().body(infoData);
     }
 
@@ -104,7 +105,8 @@ public class UserServiceImpl implements UserService {
                         .contentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED)
                         .bodyValue(body)
                         .retrieve()
-                        .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                        .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                        })
                         .block();
                 System.out.println("token: " + (tokenResponse));
                 if (tokenResponse != null) {
@@ -142,7 +144,8 @@ public class UserServiceImpl implements UserService {
                 .uri(googleUserInfoEndpoint)
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
                 .block();
     }
 }
