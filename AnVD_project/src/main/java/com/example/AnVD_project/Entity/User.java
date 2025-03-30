@@ -1,11 +1,13 @@
 package com.example.AnVD_project.Entity;
 
+import com.example.AnVD_project.common.EntityCommon;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Table(name = "user")
 @Entity
@@ -13,7 +15,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@SuperBuilder
+public class User extends EntityCommon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,6 +29,9 @@ public class User {
     private String password;
     @Column(name = "number_phone")
     private String numberPhone;
+    @Column(name = "role_id", insertable = false, updatable = false)
+    private Long roleId;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "role_id")
