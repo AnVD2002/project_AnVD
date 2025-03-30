@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/oauth2/**", "/login/**", "/logout/**").permitAll()
+                        .requestMatchers("/api/v1/oauth2/**", "/api/v1/login/**", "/api/v1/logout/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -36,11 +36,11 @@ public class SecurityConfig {
                                         )
                                 )
                         )
-                        .defaultSuccessUrl("/login/success")
-                        .failureUrl("/login/failure")
+                        .defaultSuccessUrl("/api/v1/login/success")
+                        .failureUrl("/api/v1/login/failure")
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/logout/success")
+                        .logoutSuccessUrl("/api/v1/logout/success")
                         .deleteCookies("JSESSIONID")
                 )
         ;

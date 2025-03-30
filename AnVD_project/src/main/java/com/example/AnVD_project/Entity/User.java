@@ -17,7 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+    private Long id;
     @Column(name = "email")
     private String email;
     @Column(name = "name")
@@ -26,8 +26,6 @@ public class User {
     private String password;
     @Column(name = "number_phone")
     private String numberPhone;
-    @Column(name = "role_id")
-    private Long roleId;
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "role_id")

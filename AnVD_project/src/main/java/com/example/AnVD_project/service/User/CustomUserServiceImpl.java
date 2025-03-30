@@ -1,4 +1,4 @@
-package com.example.AnVD_project.service;
+package com.example.AnVD_project.service.User;
 
 import com.example.AnVD_project.Entity.CustomUserDetail;
 import com.example.AnVD_project.Entity.User;
@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CustomUserImpl implements CustomUserService{
+public class CustomUserServiceImpl implements CustomUserService {
     private final UserRepository userRepository;
 
     public CustomUserDetail loadUserByUsername(String email) throws UsernameNotFoundException {

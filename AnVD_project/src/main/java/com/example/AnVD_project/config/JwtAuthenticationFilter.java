@@ -1,7 +1,7 @@
 package com.example.AnVD_project.config;
 
 import com.example.AnVD_project.Entity.CustomUserDetail;
-import com.example.AnVD_project.service.CustomUserService;
+import com.example.AnVD_project.service.User.CustomUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
