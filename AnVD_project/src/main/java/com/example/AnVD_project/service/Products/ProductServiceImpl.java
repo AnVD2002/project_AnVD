@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import javax.sound.sampled.Line;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -72,19 +70,39 @@ public class ProductServiceImpl implements ProductService {
 
         List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
 
-        List<Lines> lines = lineRepository.findByIdIn(lineIds);
+        List<Lines> lines = new ArrayList<>();
 
-        List<Products> products = productRepository.findByIdIn(productIds);
+        List<Groups> groups = new ArrayList<>();
 
-        List<Groups> groups = groupRepository.findByIdIn(groupIds);
+        List<Products> products = new ArrayList<>();
 
-        List<Categories> categories = categoryRepository.findByIdIn(categoryIds);
+        List<Categories> categories = new ArrayList<>();
 
+        if (!CollectionUtils.isEmpty(lineIds)) {
+            lines = lineRepository.findByIdIn(lineIds);
+        }
+
+        if (!CollectionUtils.isEmpty(groupIds)) {
+            groups = groupRepository.findByIdIn(groupIds);
+        }
+
+        if (!CollectionUtils.isEmpty(categoryIds)) {
+            categories = categoryRepository.findByIdIn(categoryIds);
+        }
+
+        if (!CollectionUtils.isEmpty(productIds)) {
+            products = productRepository.findByIdIn(productIds);
+        }
 
         for (CrudProductRequestDTO rq : request) {
 
+            Groups group = groups.stream()
+                    .filter(g -> g.getId().equals(rq.getCategoryId()))
+                    .findFirst()
+                    .orElse(null);
+
             Products p = products.stream()
-                    .filter(ps->ps.getNmProduct().equals(rq.getProductName()))
+                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && !ObjectUtils.isEmpty(ps.getDeleteAt()))
                     .findFirst()
                     .orElse(null);
 
@@ -92,10 +110,14 @@ public class ProductServiceImpl implements ProductService {
                 throw new BusinessException(ResponseEnum.PRODUCT_ALREADY_EXISTS.getCode(), ResponseEnum.PRODUCT_ALREADY_EXISTS.getMessage());
             }
 
-            Groups group = groups.stream()
-                    .filter(g -> g.getId().equals(rq.getCategoryId()))
+            Products deleteSoft = products.stream()
+                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && ObjectUtils.isEmpty(ps.getDeleteAt()))
                     .findFirst()
                     .orElse(null);
+
+            if (!ObjectUtils.isEmpty(deleteSoft)) {
+                createForProductDeletedSoft(deleteSoft, rq, group);
+            }
 
             Products newProduct = Products.builder()
                     .nmProduct(rq.getProductName())
@@ -142,11 +164,72 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-    public void updateProduct(List<CrudProductRequestDTO> request) {
+    void createForProductDeletedSoft(Products product, CrudProductRequestDTO request, Groups group) {
+        product.setDeleteAt(null);
+        supUpdateProduct(request, product, group);
+        productRepository.save(product);
+    }
 
+    public void updateProduct(List<CrudProductRequestDTO> request) {
+        List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
+
+        List<Products> products = new ArrayList<>();
+
+        List<Long> groupIds = request.stream().map(CrudProductRequestDTO::getGroupId).toList();
+
+        List<Groups> groups = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(groupIds)) {
+            groups = groupRepository.findByIdIn(groupIds);
+        }
+
+        if (!CollectionUtils.isEmpty(productIds)) {
+            products = productRepository.findByIdIn(productIds);
+        }
+
+        for (CrudProductRequestDTO rq : request) {
+
+            Products product = products.stream().filter(p -> p.getId().equals(rq.getProductId()) && ObjectUtils.isEmpty(p.getDeleteAt())).findFirst().orElse(null);
+
+            Groups group = groups.stream()
+                    .filter(g -> g.getId().equals(rq.getGroupId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (!ObjectUtils.isEmpty(product)) {
+                supUpdateProduct(rq, product, group);
+            }
+
+        }
+    }
+
+    private void supUpdateProduct(CrudProductRequestDTO rq, Products product, Groups group) {
+        product.setNmProduct(rq.getProductName());
+        product.setDescription(rq.getProductDescription());
+        product.setImage(rq.getImageUrl());
+        product.setCostPrice(rq.getCostPrice());
+        product.setSellingPrice(rq.getSellingPrice());
+        product.setGroup(group);
+
+        String cdProduct = createCdProduct(rq.getLineCd(), rq.getCategoryCd(), rq.getGroupCd(), rq.getProductId());
+
+        product.setCdProduct(cdProduct);
     }
 
     public void deleteProduct(List<CrudProductRequestDTO> request) {
+        List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
+
+        List<Products> products = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(productIds)) {
+            products = productRepository.findByIdIn(productIds);
+        }
+
+        for (Products p : products) {
+            p.setDeleteAt(Instant.now());
+        }
+
+        productRepository.saveAll(products);
 
     }
 

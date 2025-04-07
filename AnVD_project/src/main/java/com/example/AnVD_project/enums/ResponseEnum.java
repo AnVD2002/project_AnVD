@@ -3,8 +3,6 @@ package com.example.AnVD_project.enums;
 import lombok.*;
 
 @RequiredArgsConstructor
-
-@AllArgsConstructor
 @Getter
 public enum ResponseEnum {
 
