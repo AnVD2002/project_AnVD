@@ -35,7 +35,7 @@ public class Categories extends EntityCommon {
     private String description;
 
     @Column(name = "line_id", insertable = false, updatable = false)
-    private Long line_id;
+    private Long lineId;
 
     @ManyToOne
     @JsonBackReference("line-categories")
