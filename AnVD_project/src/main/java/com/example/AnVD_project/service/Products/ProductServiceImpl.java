@@ -1,6 +1,7 @@
 package com.example.AnVD_project.service.Products;
 
-import com.example.AnVD_project.DTO.Product.CrudProductRequestDTO;
+import com.example.AnVD_project.DTO.Request.Product.CrudProductRequestDTO;
+import com.example.AnVD_project.DTO.Response.Products.*;
 import com.example.AnVD_project.Entity.Categories;
 import com.example.AnVD_project.Entity.Groups;
 import com.example.AnVD_project.Entity.Lines;
@@ -11,26 +12,33 @@ import com.example.AnVD_project.repository.CategoryRepository;
 import com.example.AnVD_project.repository.GroupRepository;
 import com.example.AnVD_project.repository.LineRepository;
 import com.example.AnVD_project.repository.ProductRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    LineRepository lineRepository;
+    private final LineRepository lineRepository;
 
-    GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
 
-    CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-
+    @Transactional
     public void CrudProducts(List<CrudProductRequestDTO> request) {
         if (CollectionUtils.isEmpty(request)) {
             throw new BusinessException(ResponseEnum.INVALID_INPUT.getCode(), ResponseEnum.INVALID_INPUT.getMessage());
@@ -41,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
 
         List<CrudProductRequestDTO> isUpdate = request.stream()
-                .filter(rq -> !ObjectUtils.isEmpty(rq.getProductId()))
+                .filter(rq -> !ObjectUtils.isEmpty(rq.getProductId()) && !rq.getIsDeleted())
                 .toList();
 
         List<CrudProductRequestDTO> isDelete = request.stream()
@@ -60,6 +68,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public void createProduct(List<CrudProductRequestDTO> request) {
+
+    try {
         List<Products> newProducts = new ArrayList<>();
 
         List<Long> lineIds = request.stream().map(CrudProductRequestDTO::getLineId).toList();
@@ -68,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Long> categoryIds = request.stream().map(CrudProductRequestDTO::getCategoryId).toList();
 
-        List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
+        List<String> productNames = request.stream().map(CrudProductRequestDTO::getProductName).toList();
 
         List<Lines> lines = new ArrayList<>();
 
@@ -90,8 +100,8 @@ public class ProductServiceImpl implements ProductService {
             categories = categoryRepository.findByIdIn(categoryIds);
         }
 
-        if (!CollectionUtils.isEmpty(productIds)) {
-            products = productRepository.findByIdIn(productIds);
+        if (!CollectionUtils.isEmpty(productNames)) {
+            products = productRepository.findByProductNames(productNames);
         }
 
         for (CrudProductRequestDTO rq : request) {
@@ -102,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
                     .orElse(null);
 
             Products p = products.stream()
-                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && !ObjectUtils.isEmpty(ps.getDeleteAt()))
+                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && ObjectUtils.isEmpty(ps.getDeleteAt()))
                     .findFirst()
                     .orElse(null);
 
@@ -111,27 +121,28 @@ public class ProductServiceImpl implements ProductService {
             }
 
             Products deleteSoft = products.stream()
-                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && ObjectUtils.isEmpty(ps.getDeleteAt()))
+                    .filter(ps -> ps.getNmProduct().equals(rq.getProductName()) && !ObjectUtils.isEmpty(ps.getDeleteAt()))
                     .findFirst()
                     .orElse(null);
 
             if (!ObjectUtils.isEmpty(deleteSoft)) {
                 createForProductDeletedSoft(deleteSoft, rq, group);
+                newProducts.add(deleteSoft);
             }
+            else {
+                Products newProduct = Products.builder()
+                        .nmProduct(rq.getProductName())
+                        .costPrice(rq.getCostPrice())
+                        .sellingPrice(rq.getSellingPrice())
+                        .description(rq.getProductDescription())
+                        .createAt(Instant.now())
+                        .image(rq.getImageUrl())
+                        .group(group)
+                        .build();
 
-            Products newProduct = Products.builder()
-                    .nmProduct(rq.getProductName())
-                    .costPrice(rq.getCostPrice())
-                    .sellingPrice(rq.getSellingPrice())
-                    .description(rq.getProductDescription())
-                    .createAt(Instant.now())
-                    .image(rq.getImageUrl())
-                    .group(group)
-                    .build();
-
-            newProducts.add(newProduct);
+                newProducts.add(newProduct);
+            }
         }
-
         productRepository.saveAll(newProducts);
 
 
@@ -161,13 +172,17 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productRepository.saveAll(products);
+    }
+    catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi xử lý sản phẩm", e);
+    }
+
 
     }
 
     void createForProductDeletedSoft(Products product, CrudProductRequestDTO request, Groups group) {
         product.setDeleteAt(null);
         supUpdateProduct(request, product, group);
-        productRepository.save(product);
     }
 
     public void updateProduct(List<CrudProductRequestDTO> request) {
@@ -211,7 +226,7 @@ public class ProductServiceImpl implements ProductService {
         product.setSellingPrice(rq.getSellingPrice());
         product.setGroup(group);
 
-        String cdProduct = createCdProduct(rq.getLineCd(), rq.getCategoryCd(), rq.getGroupCd(), rq.getProductId());
+        String cdProduct = createCdProduct(rq.getLineCd(), rq.getCategoryCd(), rq.getGroupCd(), product.getId());
 
         product.setCdProduct(cdProduct);
     }
@@ -238,6 +253,66 @@ public class ProductServiceImpl implements ProductService {
             throw new BusinessException(ResponseEnum.INVALID_INPUT.getCode(), ResponseEnum.INVALID_INPUT.getMessage());
         }
         return cdLine + cdGroup + cdCategory + productId;
+    }
+
+
+    public List<ProductsResponse> getDataProducts(String cdLine , String cdCategory, String cdGroup) {
+        List<ProductsResponseDTO> responsesDTO = productRepository.findProduct(cdLine, cdGroup, cdCategory);
+
+        Map<String, ProductsResponse> lineMap = new LinkedHashMap<>();
+
+        if (CollectionUtils.isEmpty(responsesDTO)) {
+            throw new BusinessException(ResponseEnum.PRODUCT_NOT_FOUND.getCode(), ResponseEnum.PRODUCT_NOT_FOUND.getMessage());
+        }
+
+        for (ProductsResponseDTO dto : responsesDTO) {
+
+            ProductsResponse line = lineMap.computeIfAbsent(dto.getCdLine(), cl -> {
+                ProductsResponse res = new ProductsResponse();
+                res.setCdLine(cdLine);
+                res.setNmLine(dto.getNmLine());
+                res.setGroupByCategory(new ArrayList<>());
+                return res;
+            });
+
+            CategoryGroupDTO category = line.getGroupByCategory().stream()
+                    .filter(cat -> cat.getCdCategory().equals(dto.getCdCategory()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        CategoryGroupDTO newCat = new CategoryGroupDTO();
+                        newCat.setCdCategory(dto.getCdCategory());
+                        newCat.setNmCategory(dto.getNmCategory());
+                        newCat.setGroupGroupDTO(new ArrayList<>());
+                        line.getGroupByCategory().add(newCat);
+                        return newCat;
+                    });
+
+            GroupGroupDTO group = category.getGroupGroupDTO().stream()
+                    .filter(gr -> gr.getCdGroup().equals(dto.getCdGroup()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        GroupGroupDTO newGroup = new GroupGroupDTO();
+                        newGroup.setCdGroup(dto.getCdGroup());
+                        newGroup.setNmGroup(dto.getNmGroup());
+                        newGroup.setProductGroupDTO(new ArrayList<>());
+                        category.getGroupGroupDTO().add(newGroup);
+                        return newGroup;
+                    });
+
+            ProductGroupDTO product = new ProductGroupDTO();
+            product.setCdProduct(dto.getCdProduct());
+            product.setProductId(dto.getProductId());
+            product.setDescription(dto.getDescription());
+            product.setNmProduct(dto.getNmProduct());
+            product.setCostPrice(dto.getCostPrice());
+            product.setSellingPrice(dto.getSellingPrice());
+            product.setImage(dto.getImage());
+
+            group.getProductGroupDTO().add(product);
+        }
+
+        return new ArrayList<>(lineMap.values());
+
     }
 
 }

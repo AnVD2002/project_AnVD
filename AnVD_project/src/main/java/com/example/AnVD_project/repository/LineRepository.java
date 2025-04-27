@@ -12,4 +12,6 @@ import java.util.List;
 public interface LineRepository extends CrudRepository<Lines, Long> {
     @Query(value = "select l from Lines l where l.id in :ids")
     List<Lines> findByIdIn(@Param("ids") List<Long> ids);
+    @Query(value = "select l from Lines l where l.nmLine in :nmLine")
+    List<Lines> findByNmLine(@Param("nmLine") List<String> nmLine);
 }

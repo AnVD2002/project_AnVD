@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service.User;
 
-import com.example.AnVD_project.DTO.User.RegisterRequestDTO;
+import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 

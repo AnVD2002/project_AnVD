@@ -1,4 +1,4 @@
-package com.example.AnVD_project.DTO.User;
+package com.example.AnVD_project.DTO.Request.User;
 
 import lombok.*;
 

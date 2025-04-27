@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service.User;
 
-import com.example.AnVD_project.DTO.User.RegisterRequestDTO;
+import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
 import com.example.AnVD_project.Entity.Role;
 import com.example.AnVD_project.Entity.User;
 import com.example.AnVD_project.enums.RoleEnum;

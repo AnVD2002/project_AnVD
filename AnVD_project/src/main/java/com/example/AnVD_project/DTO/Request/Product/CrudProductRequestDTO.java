@@ -1,4 +1,4 @@
-package com.example.AnVD_project.DTO.Product;
+package com.example.AnVD_project.DTO.Request.Product;
 
 import lombok.*;
 
