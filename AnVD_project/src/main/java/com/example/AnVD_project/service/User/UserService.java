@@ -1,26 +1,25 @@
 package com.example.AnVD_project.service.User;
 
-import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
+import com.example.AnVD_project.Entity.User;
+import com.example.AnVD_project.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.Optional;
 
-public interface UserService {
-    /**
-     *
-     * @param request
-     * @return
-     */
-    ResponseEntity<?> registerAccount(RegisterRequestDTO request);
 
-    /**
-     *
-     * @param loginType
-     * @param code
-     * @return
-     */
-    Map<String, Object> authenticateAndFetchProfile(String loginType, String code);
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class UserService {
 
-    String generateUrl(HttpServletRequest request, String registrationId);
+    private final UserRepository userRepository;
+
+    public Optional<User> loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email);
+    }
 }

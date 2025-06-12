@@ -3,6 +3,7 @@ package com.example.AnVD_project.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,9 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final ClientRegistrationRepository clientRegistrationRepository;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/oauth2/**", "/api/v1/login/**", "/api/v1/logout/**", "/api/v1/product/**").permitAll()
@@ -36,15 +42,9 @@ public class SecurityConfig {
                                         )
                                 )
                         )
-                        .defaultSuccessUrl("/api/v1/login/success")
-                        .failureUrl("/api/v1/login/failure")
                 )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/api/v1/logout/success")
-                        .deleteCookies("JSESSIONID")
-                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         ;
-        System.out.println("security config: " + ("security"));
 
         return http.build();
     }

@@ -1,11 +1,14 @@
 package com.example.AnVD_project.config;
+import com.example.AnVD_project.Entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
@@ -39,13 +42,31 @@ public class JwtProvider {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public boolean isTokenValid(String token, User user) {
+        final String username = ExtractUserName(token);
+        return (username.equals(user.getEmail())) && !isTokenExpired(token);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = ExtractUserName(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private Key getSignInKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    }
+
 }

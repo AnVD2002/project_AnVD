@@ -1,7 +1,9 @@
 package com.example.AnVD_project.controller;
 
 import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
-import com.example.AnVD_project.service.User.UserService;
+import com.example.AnVD_project.service.Auth.LoginService;
+import com.example.AnVD_project.service.Auth.RegisterService;
+import com.example.AnVD_project.service.Auth.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +15,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final TokenService tokenService;
+
+    private final RegisterService registerService;
+
     @GetMapping("/generate-url")
     public String generateAuthorizationUrl(HttpServletRequest request,
                                            @RequestParam String registrationId) {
-        return userService.generateUrl(request, registrationId);
+        return tokenService.generateUrl(request, registrationId);
     }
 
     @GetMapping("/auth-and-fetch-profile")
     public Map<String,Object> authenticateAndFetchProfile(@RequestParam String LoginType, @RequestParam String code) {
-        return userService.authenticateAndFetchProfile(LoginType, code);
+        return tokenService.authenticateAndFetchProfile(LoginType, code);
     }
 
     @PostMapping("/register-account")
     public ResponseEntity<?> registerAccount(@RequestBody RegisterRequestDTO request){
-        return userService.registerAccount(request);
+        return registerService.registerAccount(request);
     }
 }

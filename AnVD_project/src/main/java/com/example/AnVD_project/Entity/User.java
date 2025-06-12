@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
+
 @Table(name = "user")
 @Entity
 @Getter
@@ -31,6 +33,10 @@ public class User extends EntityCommon {
     private String numberPhone;
     @Column(name = "role_id", insertable = false, updatable = false)
     private Long roleId;
+    @Column(name = "accessToken")
+    private String accessToken;
+    @Column(name = "expireTime")
+    private Instant expireTime;
 
     @ManyToOne
     @JsonBackReference
