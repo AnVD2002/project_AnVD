@@ -1,17 +1,15 @@
 package com.example.AnVD_project.service.Auth;
 
-import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
+import com.example.AnVD_project.DTO.Request.User.RegisterRequest;
 import com.example.AnVD_project.Entity.Role;
 import com.example.AnVD_project.Entity.User;
 import com.example.AnVD_project.enums.RoleEnum;
 import com.example.AnVD_project.repository.RoleRepository;
 import com.example.AnVD_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,7 +32,7 @@ public class RegisterServiceImpl implements RegisterService {
 
 
     @Override
-    public ResponseEntity<?> registerAccount(RegisterRequestDTO request) {
+    public ResponseEntity<?> registerAccount(RegisterRequest request) {
         Map<String, Object> infoData = getUserInfo(request.getToken());
 
         if (infoData == null || infoData.containsKey("error")) {

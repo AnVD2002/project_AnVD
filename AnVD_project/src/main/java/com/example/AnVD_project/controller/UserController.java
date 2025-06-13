@@ -1,7 +1,6 @@
 package com.example.AnVD_project.controller;
 
-import com.example.AnVD_project.DTO.Request.User.RegisterRequestDTO;
-import com.example.AnVD_project.service.Auth.LoginService;
+import com.example.AnVD_project.DTO.Request.User.RegisterRequest;
 import com.example.AnVD_project.service.Auth.RegisterService;
 import com.example.AnVD_project.service.Auth.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/register-account")
-    public ResponseEntity<?> registerAccount(@RequestBody RegisterRequestDTO request){
+    public ResponseEntity<?> registerAccount(@RequestBody RegisterRequest request){
         return registerService.registerAccount(request);
     }
 }
