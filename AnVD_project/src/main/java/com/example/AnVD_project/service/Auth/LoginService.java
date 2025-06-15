@@ -1,8 +1,8 @@
 package com.example.AnVD_project.service.Auth;
 
-import com.example.AnVD_project.DTO.LoginResponse;
-import com.example.AnVD_project.DTO.Request.User.LoginRequest;
-import com.example.AnVD_project.DTO.Request.User.Oauth2Request;
+import com.example.AnVD_project.dto.LoginResponse;
+import com.example.AnVD_project.dto.request.user.LoginRequest;
+import com.example.AnVD_project.dto.request.user.Oauth2Request;
 import org.springframework.http.ResponseEntity;
 
 public interface LoginService {

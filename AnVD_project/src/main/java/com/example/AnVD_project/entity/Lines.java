@@ -1,4 +1,4 @@
-package com.example.AnVD_project.Entity;
+package com.example.AnVD_project.entity;
 
 import com.example.AnVD_project.common.EntityCommon;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

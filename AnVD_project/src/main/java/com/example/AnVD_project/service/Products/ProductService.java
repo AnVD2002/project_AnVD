@@ -1,7 +1,7 @@
 package com.example.AnVD_project.service.Products;
 
-import com.example.AnVD_project.DTO.Request.Product.ProductRequestDTO;
-import com.example.AnVD_project.DTO.Response.Products.ProductsResponse;
+import com.example.AnVD_project.dto.request.product.ProductRequestDTO;
+import com.example.AnVD_project.dto.response.products.ProductsResponse;
 
 import java.util.List;
 

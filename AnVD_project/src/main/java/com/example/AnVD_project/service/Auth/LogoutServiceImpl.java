@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service.Auth;
 
-import com.example.AnVD_project.Entity.User;
+import com.example.AnVD_project.entity.User;
 import com.example.AnVD_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,4 @@
-package com.example.AnVD_project.DTO.Request.Categories;
-
-import lombok.*;
+package com.example.AnVD_project.dto.request.categories;
 
 //@AllArgsConstructor
 //@NoArgsConstructor

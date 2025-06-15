@@ -1,4 +1,4 @@
-package com.example.AnVD_project.DTO.Response;
+package com.example.AnVD_project.dto.response;
 
 import java.time.Instant;
 

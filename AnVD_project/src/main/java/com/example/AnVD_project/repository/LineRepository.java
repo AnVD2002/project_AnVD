@@ -1,6 +1,6 @@
 package com.example.AnVD_project.repository;
 
-import com.example.AnVD_project.Entity.Lines;
+import com.example.AnVD_project.entity.Lines;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

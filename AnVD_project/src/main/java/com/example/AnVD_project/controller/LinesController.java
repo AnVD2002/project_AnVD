@@ -1,6 +1,6 @@
 package com.example.AnVD_project.controller;
 
-import com.example.AnVD_project.DTO.Request.Lines.LinesRequestDTO;
+import com.example.AnVD_project.dto.request.lines.LinesRequestDTO;
 import com.example.AnVD_project.enums.RoleEnum;
 import com.example.AnVD_project.enums.Secured;
 import com.example.AnVD_project.service.Lines.LinesService;

@@ -1,4 +1,4 @@
-package com.example.AnVD_project.DTO.Request.Lines;
+package com.example.AnVD_project.dto.request.lines;
 
 import lombok.*;
 

@@ -1,12 +1,8 @@
-package com.example.AnVD_project.AspectOP;
+package com.example.AnVD_project.aop;
 
-import com.example.AnVD_project.enums.RoleEnum;
 import com.example.AnVD_project.enums.Secured;
-import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

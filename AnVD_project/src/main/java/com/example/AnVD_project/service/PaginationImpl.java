@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service;
 
-import com.example.AnVD_project.DTO.PageableResponse;
+import com.example.AnVD_project.dto.PageableResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

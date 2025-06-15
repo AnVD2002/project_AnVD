@@ -1,11 +1,11 @@
 package com.example.AnVD_project.service.Products;
 
-import com.example.AnVD_project.DTO.Request.Product.ProductRequestDTO;
-import com.example.AnVD_project.DTO.Response.Products.*;
-import com.example.AnVD_project.Entity.Categories;
-import com.example.AnVD_project.Entity.Groups;
-import com.example.AnVD_project.Entity.Lines;
-import com.example.AnVD_project.Entity.Products;
+import com.example.AnVD_project.dto.request.product.ProductRequestDTO;
+import com.example.AnVD_project.dto.response.products.*;
+import com.example.AnVD_project.entity.Categories;
+import com.example.AnVD_project.entity.Groups;
+import com.example.AnVD_project.entity.Lines;
+import com.example.AnVD_project.entity.Products;
 import com.example.AnVD_project.enums.ResponseEnum;
 import com.example.AnVD_project.exception.BusinessException;
 import com.example.AnVD_project.repository.CategoryRepository;

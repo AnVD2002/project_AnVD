@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service.Lines;
 
-import com.example.AnVD_project.DTO.Request.Lines.LinesRequestDTO;
+import com.example.AnVD_project.dto.request.lines.LinesRequestDTO;
 
 import java.util.List;
 

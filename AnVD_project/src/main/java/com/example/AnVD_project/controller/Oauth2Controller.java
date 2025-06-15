@@ -1,6 +1,6 @@
 package com.example.AnVD_project.controller;
 
-import com.example.AnVD_project.DTO.Request.User.RegisterRequest;
+import com.example.AnVD_project.dto.request.user.RegisterRequest;
 import com.example.AnVD_project.service.Auth.RegisterService;
 import com.example.AnVD_project.service.Auth.TokenService;
 import jakarta.servlet.http.HttpServletRequest;

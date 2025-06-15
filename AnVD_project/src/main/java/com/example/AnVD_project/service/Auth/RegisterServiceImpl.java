@@ -1,8 +1,8 @@
 package com.example.AnVD_project.service.Auth;
 
-import com.example.AnVD_project.DTO.Request.User.RegisterRequest;
-import com.example.AnVD_project.Entity.Role;
-import com.example.AnVD_project.Entity.User;
+import com.example.AnVD_project.dto.request.user.RegisterRequest;
+import com.example.AnVD_project.entity.Role;
+import com.example.AnVD_project.entity.User;
 import com.example.AnVD_project.enums.RoleEnum;
 import com.example.AnVD_project.repository.RoleRepository;
 import com.example.AnVD_project.repository.UserRepository;

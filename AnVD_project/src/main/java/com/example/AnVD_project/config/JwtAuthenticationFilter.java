@@ -1,7 +1,7 @@
 package com.example.AnVD_project.config;
 
-import com.example.AnVD_project.Entity.User;
-import com.example.AnVD_project.service.User.UserService;
+import com.example.AnVD_project.entity.User;
+import com.example.AnVD_project.service.User.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     @Autowired
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         username = jwtProvider.ExtractUserName(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<User> user = userService.loadUserByUsername(username);
+            Optional<User> user = userServiceImpl.loadUserByUsername(username);
             User userDetails = user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
             long now = System.currentTimeMillis();
             if(!StringUtils.equals(jwt, userDetails.getAccessToken())) {

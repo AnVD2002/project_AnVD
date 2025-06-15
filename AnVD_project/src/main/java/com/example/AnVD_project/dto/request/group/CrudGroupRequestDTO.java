@@ -1,6 +1,4 @@
-package com.example.AnVD_project.DTO.Request.Group;
-
-import lombok.*;
+package com.example.AnVD_project.dto.request.group;
 
 //@AllArgsConstructor
 //@NoArgsConstructor

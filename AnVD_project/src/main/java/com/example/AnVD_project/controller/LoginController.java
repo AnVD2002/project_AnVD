@@ -1,7 +1,7 @@
 package com.example.AnVD_project.controller;
 
-import com.example.AnVD_project.DTO.Request.User.LoginRequest;
-import com.example.AnVD_project.DTO.Request.User.Oauth2Request;
+import com.example.AnVD_project.dto.request.user.LoginRequest;
+import com.example.AnVD_project.dto.request.user.Oauth2Request;
 import com.example.AnVD_project.service.Auth.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

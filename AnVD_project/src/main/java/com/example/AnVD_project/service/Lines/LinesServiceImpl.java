@@ -1,7 +1,7 @@
 package com.example.AnVD_project.service.Lines;
 
-import com.example.AnVD_project.DTO.Request.Lines.LinesRequestDTO;
-import com.example.AnVD_project.Entity.Lines;
+import com.example.AnVD_project.dto.request.lines.LinesRequestDTO;
+import com.example.AnVD_project.entity.Lines;
 import com.example.AnVD_project.enums.ResponseEnum;
 import com.example.AnVD_project.exception.BusinessException;
 import com.example.AnVD_project.repository.LineRepository;
@@ -139,10 +139,6 @@ public class LinesServiceImpl implements LinesService{
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", e);
         }
-
-
-
-
 
     }
 

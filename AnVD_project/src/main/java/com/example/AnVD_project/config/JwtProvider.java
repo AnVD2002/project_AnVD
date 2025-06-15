@@ -1,6 +1,6 @@
 package com.example.AnVD_project.config;
 
-import com.example.AnVD_project.Entity.User;
+import com.example.AnVD_project.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

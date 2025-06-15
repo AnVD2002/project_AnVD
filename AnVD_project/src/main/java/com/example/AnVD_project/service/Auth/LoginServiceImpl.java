@@ -1,12 +1,12 @@
 package com.example.AnVD_project.service.Auth;
 
-import com.example.AnVD_project.DTO.LoginResponse;
-import com.example.AnVD_project.DTO.Request.User.LoginRequest;
-import com.example.AnVD_project.DTO.Request.User.Oauth2Request;
-import com.example.AnVD_project.Entity.User;
+import com.example.AnVD_project.dto.LoginResponse;
+import com.example.AnVD_project.dto.request.user.LoginRequest;
+import com.example.AnVD_project.dto.request.user.Oauth2Request;
+import com.example.AnVD_project.entity.User;
 import com.example.AnVD_project.config.JwtProvider;
 import com.example.AnVD_project.repository.UserRepository;
-import com.example.AnVD_project.service.User.UserService;
+import com.example.AnVD_project.service.User.UserServiceImpl;
 import com.example.AnVD_project.until.Auth.UserInfoOauth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class LoginServiceImpl implements LoginService {
     private UserInfoOauth2 userInfoOauth2;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
 
             String mail = userInfo.get("email").toString();
 
-            Optional<User> user = userService.loadUserByUsername(mail);
+            Optional<User> user = userServiceImpl.loadUserByUsername(mail);
 
             LoginResponse loginResponse = processLoginUser(user);
 
@@ -64,7 +64,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public ResponseEntity<LoginResponse> loginDefault(LoginRequest request) {
         try {
-            Optional<User> userCheckExist = userService.loadUserByUsername(request.getUsername());
+            Optional<User> userCheckExist = userServiceImpl.loadUserByUsername(request.getUsername());
 
             if (userCheckExist.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "account not found");

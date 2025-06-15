@@ -1,4 +1,4 @@
-package com.example.AnVD_project.Entity;
+package com.example.AnVD_project.entity;
 
 import com.example.AnVD_project.common.EntityCommon;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
 
 @Table(name = "user")
 @Entity
