@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/oauth2")
 @RequiredArgsConstructor
-public class UserController {
+public class Oauth2Controller {
 
     private final TokenService tokenService;
 
@@ -33,4 +33,5 @@ public class UserController {
     public ResponseEntity<?> registerAccount(@RequestBody RegisterRequest request){
         return registerService.registerAccount(request);
     }
+
 }

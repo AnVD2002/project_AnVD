@@ -6,12 +6,11 @@ import com.example.AnVD_project.Entity.User;
 import com.example.AnVD_project.enums.RoleEnum;
 import com.example.AnVD_project.repository.RoleRepository;
 import com.example.AnVD_project.repository.UserRepository;
+import com.example.AnVD_project.until.Auth.UserInfoOauth2;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
@@ -19,21 +18,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-
 @RequiredArgsConstructor
 
 public class RegisterServiceImpl implements RegisterService {
 
-    private final WebClient webClient;
 
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
 
+    private final UserInfoOauth2 userInfoOauth2Constant;
 
     @Override
     public ResponseEntity<?> registerAccount(RegisterRequest request) {
-        Map<String, Object> infoData = getUserInfo(request.getToken());
+        Map<String, Object> infoData = userInfoOauth2Constant.getUserInfo(request.getToken());
 
         if (infoData == null || infoData.containsKey("error")) {
             return ResponseEntity.badRequest().body(infoData);
@@ -52,7 +50,6 @@ public class RegisterServiceImpl implements RegisterService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User already exists");
         });
 
-
         Optional<Role> roleOpt = roleRepository.findRoleByRoleName(RoleEnum.USER);
 
         Role role = roleOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -64,19 +61,7 @@ public class RegisterServiceImpl implements RegisterService {
         newUser.setRole(role);
         userRepository.save(newUser);
 
-        return ResponseEntity.ok().body(infoData);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
-    public Map<String, Object> getUserInfo(String accessToken) {
-        String googleUserInfoEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
-
-        return webClient.get()
-                .uri(googleUserInfoEndpoint)
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-                })
-                .block();
-    }
 }

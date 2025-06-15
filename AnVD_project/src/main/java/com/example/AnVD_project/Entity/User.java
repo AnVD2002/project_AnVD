@@ -33,10 +33,13 @@ public class User extends EntityCommon {
     private String numberPhone;
     @Column(name = "role_id", insertable = false, updatable = false)
     private Long roleId;
-    @Column(name = "accessToken")
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
+    private String refreshToken;
+    @Column(name = "access_token", columnDefinition = "TEXT")
     private String accessToken;
-    @Column(name = "expireTime")
-    private Instant expireTime;
+    @Column(name = "expire_time")
+    private Long expireTime;
+
 
     @ManyToOne
     @JsonBackReference

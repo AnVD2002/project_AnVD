@@ -1,6 +1,6 @@
 package com.example.AnVD_project.service.Products;
 
-import com.example.AnVD_project.DTO.Request.Product.CrudProductRequestDTO;
+import com.example.AnVD_project.DTO.Request.Product.ProductRequestDTO;
 import com.example.AnVD_project.DTO.Response.Products.*;
 import com.example.AnVD_project.Entity.Categories;
 import com.example.AnVD_project.Entity.Groups;
@@ -39,21 +39,21 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public void CrudProducts(List<CrudProductRequestDTO> request) {
+    public void saveProducts(List<ProductRequestDTO> request) {
         if (CollectionUtils.isEmpty(request)) {
             throw new BusinessException(ResponseEnum.INVALID_INPUT.getCode(), ResponseEnum.INVALID_INPUT.getMessage());
         }
 
-        List<CrudProductRequestDTO> isCreate = request.stream()
+        List<ProductRequestDTO> isCreate = request.stream()
                 .filter(rq -> ObjectUtils.isEmpty(rq.getProductId()))
                 .toList();
 
-        List<CrudProductRequestDTO> isUpdate = request.stream()
+        List<ProductRequestDTO> isUpdate = request.stream()
                 .filter(rq -> !ObjectUtils.isEmpty(rq.getProductId()) && !rq.getIsDeleted())
                 .toList();
 
-        List<CrudProductRequestDTO> isDelete = request.stream()
-                .filter(CrudProductRequestDTO::getIsDeleted)
+        List<ProductRequestDTO> isDelete = request.stream()
+                .filter(ProductRequestDTO::getIsDeleted)
                 .toList();
 
         if (!CollectionUtils.isEmpty(isCreate)) {
@@ -67,18 +67,18 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    public void createProduct(List<CrudProductRequestDTO> request) {
+    public void createProduct(List<ProductRequestDTO> request) {
 
     try {
         List<Products> newProducts = new ArrayList<>();
 
-        List<Long> lineIds = request.stream().map(CrudProductRequestDTO::getLineId).toList();
+        List<Long> lineIds = request.stream().map(ProductRequestDTO::getLineId).toList();
 
-        List<Long> groupIds = request.stream().map(CrudProductRequestDTO::getGroupId).toList();
+        List<Long> groupIds = request.stream().map(ProductRequestDTO::getGroupId).toList();
 
-        List<Long> categoryIds = request.stream().map(CrudProductRequestDTO::getCategoryId).toList();
+        List<Long> categoryIds = request.stream().map(ProductRequestDTO::getCategoryId).toList();
 
-        List<String> productNames = request.stream().map(CrudProductRequestDTO::getProductName).toList();
+        List<String> productNames = request.stream().map(ProductRequestDTO::getProductName).toList();
 
         List<Lines> lines = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
             products = productRepository.findByProductNames(productNames);
         }
 
-        for (CrudProductRequestDTO rq : request) {
+        for (ProductRequestDTO rq : request) {
 
             Groups group = groups.stream()
                     .filter(g -> g.getId().equals(rq.getCategoryId()))
@@ -180,17 +180,17 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-    void createForProductDeletedSoft(Products product, CrudProductRequestDTO request, Groups group) {
+    void createForProductDeletedSoft(Products product, ProductRequestDTO request, Groups group) {
         product.setDeleteAt(null);
         supUpdateProduct(request, product, group);
     }
 
-    public void updateProduct(List<CrudProductRequestDTO> request) {
-        List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
+    public void updateProduct(List<ProductRequestDTO> request) {
+        List<Long> productIds = request.stream().map(ProductRequestDTO::getProductId).toList();
 
         List<Products> products = new ArrayList<>();
 
-        List<Long> groupIds = request.stream().map(CrudProductRequestDTO::getGroupId).toList();
+        List<Long> groupIds = request.stream().map(ProductRequestDTO::getGroupId).toList();
 
         List<Groups> groups = new ArrayList<>();
 
@@ -202,7 +202,7 @@ public class ProductServiceImpl implements ProductService {
             products = productRepository.findByIdIn(productIds);
         }
 
-        for (CrudProductRequestDTO rq : request) {
+        for (ProductRequestDTO rq : request) {
 
             Products product = products.stream().filter(p -> p.getId().equals(rq.getProductId()) && ObjectUtils.isEmpty(p.getDeleteAt())).findFirst().orElse(null);
 
@@ -218,7 +218,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void supUpdateProduct(CrudProductRequestDTO rq, Products product, Groups group) {
+    private void supUpdateProduct(ProductRequestDTO rq, Products product, Groups group) {
         product.setNmProduct(rq.getProductName());
         product.setDescription(rq.getProductDescription());
         product.setImage(rq.getImageUrl());
@@ -231,8 +231,8 @@ public class ProductServiceImpl implements ProductService {
         product.setCdProduct(cdProduct);
     }
 
-    public void deleteProduct(List<CrudProductRequestDTO> request) {
-        List<Long> productIds = request.stream().map(CrudProductRequestDTO::getProductId).toList();
+    public void deleteProduct(List<ProductRequestDTO> request) {
+        List<Long> productIds = request.stream().map(ProductRequestDTO::getProductId).toList();
 
         List<Products> products = new ArrayList<>();
 

@@ -1009,7 +1009,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </schema>
     <schema id="291" parent="1" name="project_1">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2025-06-12.17:03:37</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-06-15.12:10:51</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb3_general_ci</CollationName>
     </schema>
     <schema id="292" parent="1" name="sys">
@@ -1374,7 +1374,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="376" parent="302" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>9</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
@@ -1423,29 +1423,33 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Position>12</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="388" parent="302" name="accessToken">
+    <column id="388" parent="302" name="refresh_token">
       <Position>13</Position>
-      <StoredType>varchar(225)|0s</StoredType>
+      <StoredType>text|0s</StoredType>
     </column>
-    <column id="389" parent="302" name="expireTime">
+    <column id="389" parent="302" name="expire_time">
       <Position>14</Position>
-      <StoredType>datetime|0s</StoredType>
+      <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="390" parent="302" name="FKbxl6b2is2srrj6l4e61ojioyh">
+    <column id="390" parent="302" name="access_token">
+      <Position>15</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <foreign-key id="391" parent="302" name="FKbxl6b2is2srrj6l4e61ojioyh">
       <ColNames>role_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>role</RefTableName>
     </foreign-key>
-    <index id="391" parent="302" name="PRIMARY">
+    <index id="392" parent="302" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="392" parent="302" name="FKbxl6b2is2srrj6l4e61ojioyh">
+    <index id="393" parent="302" name="FKbxl6b2is2srrj6l4e61ojioyh">
       <ColNames>role_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="393" parent="302" name="PRIMARY">
+    <key id="394" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

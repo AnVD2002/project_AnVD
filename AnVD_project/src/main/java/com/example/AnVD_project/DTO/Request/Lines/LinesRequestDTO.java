@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class CrudLinesRequestDTO {
+public class LinesRequestDTO {
     private Long id;
     private String nmLine;
     private String cdLine;

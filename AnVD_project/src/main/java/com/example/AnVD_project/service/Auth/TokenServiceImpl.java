@@ -81,19 +81,4 @@ public class TokenServiceImpl implements TokenService {
         }
         return authorizationRequest.getAuthorizationRequestUri();
     }
-
-    /*
-        get user Info
-     */
-    public Map<String, Object> getUserInfo(String accessToken) {
-        String googleUserInfoEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
-
-        return webClient.get()
-                .uri(googleUserInfoEndpoint)
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-                })
-                .block();
-    }
 }

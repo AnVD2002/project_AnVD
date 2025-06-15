@@ -1,6 +1,6 @@
 package com.example.AnVD_project.controller;
 
-import com.example.AnVD_project.DTO.Request.Product.CrudProductRequestDTO;
+import com.example.AnVD_project.DTO.Request.Product.ProductRequestDTO;
 import com.example.AnVD_project.DTO.Response.Products.ProductsResponse;
 import com.example.AnVD_project.service.Products.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<?> crudProducts(@RequestBody List<CrudProductRequestDTO> request){
-        productService.CrudProducts(request);
+    public ResponseEntity<?> crudProducts(@RequestBody List<ProductRequestDTO> request){
+        productService.saveProducts(request);
         return new ResponseEntity<>("completed",HttpStatus.OK);
     }
 

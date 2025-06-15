@@ -1,12 +1,12 @@
 package com.example.AnVD_project.config;
+
 import com.example.AnVD_project.Entity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -16,10 +16,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@AllArgsConstructor
 public class JwtProvider {
     private static final String SECRET_KEY = "e82c73692e6fa99b1770cfd6605bfc5b9ec3a12b362d9de5459a2612191497c4";
-    private static final long JWT_EXPIRATION = 3600000L; // 1 giờ
-    private static final long REFRESH_TOKEN_EXPIRATION = 2592000000L;
+    public static final long JWT_EXPIRATION = 3600000L; // 1 giờ
+    public static final long REFRESH_TOKEN_EXPIRATION = 2592000000L;
 
     /*
         * Extracts the username from the JWT token.
@@ -87,7 +88,7 @@ public class JwtProvider {
      */
     public String generateToken(User user, long expirationTime) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole());
+        claims.put("role", user.getRole().getRoleName());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -97,14 +98,6 @@ public class JwtProvider {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
-
-
-
-
-
-
-
     private Key getSignInKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }

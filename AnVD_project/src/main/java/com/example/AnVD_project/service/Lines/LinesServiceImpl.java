@@ -1,13 +1,15 @@
 package com.example.AnVD_project.service.Lines;
 
-import com.example.AnVD_project.DTO.Request.Lines.CrudLinesRequestDTO;
+import com.example.AnVD_project.DTO.Request.Lines.LinesRequestDTO;
 import com.example.AnVD_project.Entity.Lines;
 import com.example.AnVD_project.enums.ResponseEnum;
 import com.example.AnVD_project.exception.BusinessException;
 import com.example.AnVD_project.repository.LineRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,22 +18,23 @@ import java.util.List;
 @Service
 public class LinesServiceImpl implements LinesService{
     LineRepository lineRepository;
+    @Override
+    public void saveLines(List<LinesRequestDTO> request) {
 
-    void CrudLines(List<CrudLinesRequestDTO> request) {
         if(CollectionUtils.isEmpty(request)) {
             throw new BusinessException(ResponseEnum.INVALID_INPUT.getCode(), ResponseEnum.INVALID_INPUT.getMessage());
         }
-        List<CrudLinesRequestDTO> isCreate = request
+        List<LinesRequestDTO> isCreate = request
                 .stream()
                 .filter(rq-> ObjectUtils.isEmpty(rq.getId()))
                 .toList();
 
-        List<CrudLinesRequestDTO> isDelete = request
+        List<LinesRequestDTO> isDelete = request
                 .stream()
-                .filter(CrudLinesRequestDTO::isDeleted)
+                .filter(LinesRequestDTO::isDeleted)
                 .toList();
 
-        List<CrudLinesRequestDTO> isUpdate = request
+        List<LinesRequestDTO> isUpdate = request
                 .stream()
                 .filter(rq->!rq.isDeleted() && ObjectUtils.isEmpty(rq.getId()))
                 .toList();
@@ -48,52 +51,121 @@ public class LinesServiceImpl implements LinesService{
         }
     }
 
-    void createLines(List<CrudLinesRequestDTO> request) {
+    void createLines(List<LinesRequestDTO> request) {
 
-        List<Lines> newLines = new ArrayList<>();
+        try{
+            List<Lines> newLines = new ArrayList<>();
 
-        List<String> nmLine = request.stream().map(CrudLinesRequestDTO::getNmLine).toList();
+            List<String> nmLine = request.stream().map(LinesRequestDTO::getNmLine).toList();
 
-        List<Lines> lines = new ArrayList<>();
+            List<Lines> lines = new ArrayList<>();
 
-        if (!CollectionUtils.isEmpty(nmLine)) {
-            lines = lineRepository.findByNmLine(nmLine);
-        }
-
-        for (CrudLinesRequestDTO rq : request) {
-            Lines l = lines.stream()
-                    .filter(line -> line.getNmLine().equals(rq.getNmLine()))
-                    .findFirst()
-                    .orElse(null);
-            if (!ObjectUtils.isEmpty(l)) {
-                throw new BusinessException(ResponseEnum.PRODUCT_ALREADY_EXISTS.getCode(), ResponseEnum.PRODUCT_ALREADY_EXISTS.getMessage());
+            if (!CollectionUtils.isEmpty(nmLine)) {
+                lines = lineRepository.findByNmLine(nmLine);
             }
 
-            Lines newLine = Lines.builder()
-                    .nmLine(rq.getNmLine())
-                    .description(rq.getDescription())
-                    .createAt(Instant.now())
-                    .image(rq.getImage())
-                    .build();
+            List<Lines> lineDeletedSoft = new ArrayList<>();
 
-            newLines.add(newLine);
+            if (!CollectionUtils.isEmpty(lines)) {
+                lineDeletedSoft = lines.stream().filter(l -> l.getDeleteAt() != null ).toList();
+            }
+
+            for (LinesRequestDTO rq : request) {
+                Lines lineExist = lineDeletedSoft.stream()
+                        .filter(line -> line.getNmLine().equals(rq.getNmLine()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (lineExist != null) {
+                    lineExist = setDataForLine(rq, lineExist);
+                    newLines.add(lineExist);
+                }
+                else {
+                    Lines l = lines.stream()
+                            .filter(line -> line.getNmLine().equals(rq.getNmLine()) && line.getDeleteAt() == null)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (!ObjectUtils.isEmpty(l)) {
+                        throw new BusinessException(ResponseEnum.PRODUCT_ALREADY_EXISTS.getCode(), ResponseEnum.PRODUCT_ALREADY_EXISTS.getMessage());
+                    }
+
+                    Lines newLine = Lines.builder()
+                            .nmLine(rq.getNmLine())
+                            .description(rq.getDescription())
+                            .createAt(Instant.now())
+                            .cdLine(rq.getCdLine())
+                            .image(rq.getImage())
+                            .build();
+
+                    newLines.add(newLine);
+                }
+            }
+            lineRepository.saveAll(newLines);
+        }
+        catch (BusinessException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", e);
         }
 
-        lineRepository.saveAll(newLines);
+    }
 
-        for (Lines l : newLines) {
-            l.setCdLine("LINE_" + l.getId());
+    void updateLines(List<LinesRequestDTO> requests) {
+        try {
+            List<Long> ids = requests.stream().map(LinesRequestDTO::getId).toList();
+
+            List<Lines> lineExisted = lineRepository.findByIdIn(ids);
+
+            if (!CollectionUtils.isEmpty(lineExisted)) {
+                for (Lines line : lineExisted) {
+                    LinesRequestDTO request = requests.stream()
+                            .filter(l -> l.getId().equals(line.getId())).findFirst().orElse(null);
+
+                    if (!ObjectUtils.isEmpty(request)) {
+                        line.setNmLine(request.getNmLine());
+                        line.setDescription(request.getDescription());
+                        line.setCdLine(request.getCdLine());
+                        line.setImage(request.getImage());
+                        line.setCreateAt(Instant.now());
+                    }
+                }
+
+                lineRepository.saveAll(lineExisted);
+            }
+
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", e);
         }
 
-        lineRepository.saveAll(newLines);
+
+
+
+
     }
 
-    void updateLines(List<CrudLinesRequestDTO> request) {
-
+    Lines setDataForLine(LinesRequestDTO request , Lines line) {
+        line.setNmLine(request.getNmLine());
+        line.setDescription(request.getDescription());
+        line.setCdLine(request.getCdLine());
+        line.setImage(request.getImage());
+        line.setDeleteAt(null);
+        return line;
     }
 
-    void deleteLines(List<CrudLinesRequestDTO> request) {
 
+    void deleteLines(List<LinesRequestDTO> request) {
+        List<Long> ids = request.stream().map(LinesRequestDTO::getId).toList();
+
+        List<Lines> lineExisted = lineRepository.findByIdIn(ids);
+
+        for (Lines line : lineExisted) {
+            line.setDeleteAt(Instant.now());
+        }
+
+        lineRepository.saveAll(lineExisted);
     }
 
 
