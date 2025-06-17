@@ -1,5 +1,6 @@
 package com.example.AnVD_project.repository;
 
+import com.example.AnVD_project.dto.response.user.UserResponseDTO;
 import com.example.AnVD_project.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("select new com.example.AnVD_project.dto.response.user.UserResponseDTO(u.id, u.name, u.password, u.numberPhone, u.email) " +
             "from User u")
-    List<User> findAllUsers();
+    List<UserResponseDTO> findAllUsers();
 }

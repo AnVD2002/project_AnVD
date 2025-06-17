@@ -9,5 +9,5 @@ import lombok.*;
 @Builder
 public class ReportResponse {
     private String name;
-    private String data;
+    private byte[] data;
 }
